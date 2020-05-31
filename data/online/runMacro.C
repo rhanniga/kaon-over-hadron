@@ -104,7 +104,7 @@ void runMacro(bool local=true, bool full=true, bool gridMerge=true){
 
     // define the output folders
     alienHandler->SetGridWorkingDir("kaon_hadron_ratio");
-    alienHandler->SetGridOutputDir("cent_0_20");
+    alienHandler->SetGridOutputDir("cent_20_50");
 
     // connect the alien plugin to the manager
     manage->SetGridHandler(alienHandler);

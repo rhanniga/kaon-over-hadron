@@ -31,6 +31,7 @@ class AliAnalysisTaskKaonHadronRatio : public AliAnalysisTaskSE {
   virtual ~AliAnalysisTaskKaonHadronRatio();
   virtual void UserCreateOutputObjects();
   virtual void UserExec(Option_t* option);
+
   virtual void Terminate(Option_t* option);
 
   struct AliMotherContainer {
@@ -44,6 +45,8 @@ class AliAnalysisTaskKaonHadronRatio : public AliAnalysisTaskSE {
   TList* fOutputList; //!>! output list
 
   AliEventPoolManager *fCorPoolMgr; //!>! correlation pool manager
+
+  TH1D* fMultDist; //!>! event multiplicity dist
 
   TH2D* fTriggersAndKaonsPerEvent_All; //!>! triggers and all Kaons per event
   TH2D* fTriggersAndKaonsPerEvent_2_4; //!>! triggers and 2-4 GeV Kaons per event

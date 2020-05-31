@@ -4,8 +4,8 @@
 class AliAnalysisTaskKaonHadronRatio;
 ClassImp(AliAnalysisTaskKaonHadronRatio);
 
-static const int centLow = 0;
-static const int centHigh = 20;
+static const int centLow = 20;
+static const int centHigh = 50;
 
 AliAnalysisTaskKaonHadronRatio::AliAnalysisTaskKaonHadronRatio() :
     AliAnalysisTaskSE(),
@@ -159,6 +159,9 @@ void AliAnalysisTaskKaonHadronRatio::UserCreateOutputObjects()
 
     // fSignalAnalysis = new THnSparseF("fSignalAnalysis", "Signal Analysis Histogram", 6, signal_bins, signal_mins, signal_maxes);
     // fOutputList->Add(fSignalAnalysis);
+
+    fMultDist = new TH1D("fMultDist", "Event Multiplicty Distribution", 100, 0, 100);
+    fOutputList->Add(fMultDist);
 
     PostData(1, fOutputList);
 
@@ -429,6 +432,8 @@ void AliAnalysisTaskKaonHadronRatio::UserExec(Option_t*)
     fMultSelection = (AliMultSelection*)fAOD->FindListObject("MultSelection");
     if(fMultSelection) multPercentile = fMultSelection->GetMultiplicityPercentile(cent_estimator.Data());
     else return;
+
+    fMultDist->Fill(multPercentile);
 
     if(multPercentile < centLow || multPercentile > centHigh) return;
 
