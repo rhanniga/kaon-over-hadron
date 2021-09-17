@@ -1,16 +1,37 @@
-#include "AliAnalysisTaskKaonHadronRatio.h"
 #include <iostream>
+
+#include "AliAODTrack.h"
+
+#include "AliAnalysisTaskK0HadronRatio.h"
+
 
 void runMacro(bool local=true, bool full=true, bool gridMerge=true){
 
-  //Starting and ending index of the array containing the run numbers, specifies which range to run over
-  int startIndex = 0;
-  /* int endIndex = 29; */
-  int endIndex = 14;
+  float MULT_LOW = 0;
+  float MULT_HIGH = 20;
 
-  //If we want to download test files from grid then run in one swoop:
+  float TRIG_BIT = AliAODTrack::kIsHybridGCG;
+  float ASSOC_BIT =  1024; 
+  char *EFF_FILE_PATH = "eff_out.root";
+  char *CENT_ESTIMATOR = "V0A";
+
+  //Starting and ending index of the array containing the run numbers, specifies which range to run over
+  // int startIndex = 0;
+  // int endIndex = 14;
+
+  int startIndex = 15;
+  int endIndex = 28;
+
+  TString work_dir = "K0_hadron_ratio";
+  // TString output_dir = "eff_corr_cent_" + std::to_string(int(MULT_LOW)) + "_" + std::to_string(int(MULT_HIGH)) + "_20210906";
+  TString output_dir = "test_assoc_filter_bit";
+  
+  //If we want to download test files from grid then run in one swoop (usually just run completely locally):
   bool gridTest = false;
   int numTestFiles = 2;
+
+  // So we can access files from the grid (for eff cor and the like)
+  // TGrid::Connect("alien//");
 
   gInterpreter->ProcessLine(".include $ROOTSYS/include");
   gInterpreter->ProcessLine(".include $ALICE_ROOT/include");
@@ -19,7 +40,6 @@ void runMacro(bool local=true, bool full=true, bool gridMerge=true){
   AliAODInputHandler *aodH = new AliAODInputHandler();
   manage->SetInputEventHandler(aodH);
 
-  //UNSURE SECTION:
 
   //MULT SELECTION:
   gInterpreter->ProcessLine(Form(".x %s", gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C")));
@@ -30,22 +50,27 @@ void runMacro(bool local=true, bool full=true, bool gridMerge=true){
   //PID response:
   gInterpreter->ProcessLine(Form(".x %s(kFALSE)", gSystem->ExpandPathName("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C")));
 
-  //END SECTION
-
-
-  gInterpreter->LoadMacro("AliAnalysisTaskKaonHadronRatio.cxx++g");
-  AliAnalysisTaskKaonHadronRatio *task = reinterpret_cast<AliAnalysisTaskKaonHadronRatio*>(gInterpreter->ExecuteMacro("AddKaonHadronRatioTask.C"));
+  // Generating task object
+  gInterpreter->LoadMacro("AliAnalysisTaskK0HadronRatio.cxx++g");
+  AliAnalysisTaskK0HadronRatio *task = reinterpret_cast<AliAnalysisTaskK0HadronRatio*>(gInterpreter->ProcessLine(Form(".x AddK0HadronRatioTask.C(\"%s\", %f, %f, %f, %f, \"%s\", \"%s\")",
+  "K0HadronRatio",
+  MULT_LOW,
+  MULT_HIGH,
+  TRIG_BIT,
+  ASSOC_BIT,
+  EFF_FILE_PATH,
+  CENT_ESTIMATOR)));
 
   if(!manage->InitAnalysis()) return;
-  // manage->SetDebugLevel(2);
-  // manage->PrintStatus();
-  // manage->SetUseProgressBar(1, 25);
+  manage->SetDebugLevel(2);
+  manage->PrintStatus();
+  manage->SetUseProgressBar(1, 25);
 
   if(local) {
     TChain *chain = new TChain("aodTree");
-    chain->Add("/Users/ryan/alice/data/pPb_5_tev_1.root");
-    chain->Add("/Users/ryan/alice/data/pPb_5_tev_69.root");
-    chain->Add("/Users/ryan/alice/data/pPb_5_tev_420.root");
+    chain->Add("~/Wonderland/native/data/pPb_5_tev_1.root");
+    chain->Add("~/Wonderland/native/data/pPb_5_tev_69.root");
+    chain->Add("~/Wonderland/native/data/pPb_5_tev_420.root");
     manage->StartAnalysis("local", chain);
   }
 
@@ -55,22 +80,20 @@ void runMacro(bool local=true, bool full=true, bool gridMerge=true){
     // also specify the include (header) paths on grid
     alienHandler->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
     // make sure your source files get copied to grid
-    alienHandler->SetAdditionalLibs("AliAnalysisTaskKaonHadronRatio.cxx AliAnalysisTaskKaonHadronRatio.h");
-    alienHandler->SetAnalysisSource("AliAnalysisTaskKaonHadronRatio.cxx");
+    alienHandler->SetAdditionalLibs("AliAnalysisTaskK0HadronRatio.cxx AliAnalysisTaskK0HadronRatio.h");
+    alienHandler->SetAnalysisSource("AliAnalysisTaskK0HadronRatio.cxx");
     // select the aliphysics version. all other packages
     // are LOADED AUTOMATICALLY!
     alienHandler->SetAliPhysicsVersion("vAN-20181028_ROOT6-1");
     alienHandler->SetAPIVersion("V1.1x");
     // select the input data
-     alienHandler->SetGridDataDir("/alice/data/2016/LHC16q/");
+    alienHandler->SetGridDataDir("/alice/data/2016/LHC16q/");
     alienHandler->SetDataPattern("pass1_FAST/AOD190/*/*AOD.root");
     // MC has no prefix, data has prefix 000
     alienHandler->SetRunPrefix("000");
 
     // addding runs
     int runArray[] = {265525, 265521, 265501, 265499, 265435, 265427, 265426, 265425, 265424, 265422, 265421, 265420, 265419, 265388, 265387, 265385, 265384, 265383, 265381, 265378, 265377, 265344, 265343, 265342, 265339, 265338, 265336, 265334, 265332, 265309};
-    // int runArray[] = {265521, 265501, 265499, 265435, 265427, 265426, 265425, 265424, 265422, 265421, 265420, 265419, 265388, 265387, 265385, 265384, 265383, 265381, 265378, 265377, 265344, 265343, 265342, 265339, 265338, 265336, 265334, 265332, 265309};
-
     int runArrayLength = (int)(sizeof(runArray)/sizeof(runArray[0]));
 
     if(endIndex > (runArrayLength-1) || endIndex < 0) {
@@ -89,8 +112,8 @@ void runMacro(bool local=true, bool full=true, bool gridMerge=true){
 
     // number of files per subjob
     alienHandler->SetSplitMaxInputFileNumber(40);
-    alienHandler->SetExecutable("KaonHadronRatio.sh");
-    alienHandler->SetJDLName("KaonHadronRatio.jdl");
+    alienHandler->SetExecutable("K0HadronRatio.sh");
+    alienHandler->SetJDLName("K0HadronRatio.jdl");
     alienHandler->SetTTL(30000);
     alienHandler->SetOutputToRunNo(kTRUE);
     alienHandler->SetKeepLogs(kTRUE);
@@ -103,8 +126,8 @@ void runMacro(bool local=true, bool full=true, bool gridMerge=true){
     alienHandler->SetMergeViaJDL(gridMerge);
 
     // define the output folders
-    alienHandler->SetGridWorkingDir("kaon_hadron_ratio");
-    alienHandler->SetGridOutputDir("cent_20_50");
+    alienHandler->SetGridWorkingDir(work_dir); 
+    alienHandler->SetGridOutputDir(output_dir);
 
     // connect the alien plugin to the manager
     manage->SetGridHandler(alienHandler);

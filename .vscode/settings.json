@@ -1,0 +1,8 @@
+{
+	"files.associations": {
+		"AddKaonHadronRatioTask.C": "cpp",
+		"runMacro.C": "cpp",
+		"AddLambdaHadronRatioTask.C": "cpp",
+		"AddK0HadronRatioTask.C": "cpp"
+	}
+}
