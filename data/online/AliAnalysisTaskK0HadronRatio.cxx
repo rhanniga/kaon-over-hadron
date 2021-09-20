@@ -53,40 +53,22 @@ AliAnalysisTaskK0HadronRatio::AliAnalysisTaskK0HadronRatio() :
     fTriggerEff(0x0),
     fAssociatedEff(0x0),
     fK0Eff(0x0),
-    fTriggersAndK0sPerEvent_All(0x0),
-    fTriggersAndK0sPerEvent_2_4(0x0),
-    fLooseDist(0x0),
-    fTriggerDist(0x0),
     fTriggerDistEff(0x0),
-    fAssociatedHDist(0x0),
-    fK0Dist(0x0),
     fTriggeredK0Dist(0x0),
     fTriggeredK0DistFilterbit(0x0),
-    fDphiHK0(0x0),
     fDphiHK0Filterbit(0x0),
     fDphiHK0Eff(0x0),
     fDphiHK0V0(0x0),
-    fDphiHK0Rotated(0x0),
-    fDphiHK0RotatedPi(0x0),
-    fDphiHK0RotatedPiMinus(0x0),
-    fDphiHK0Flipped(0x0),
-    fDphiHH(0x0),
     fDphiHHEff(0x0),
-    fDphiTriggerTrigger(0x0),
-    fDphiHK0LS(0x0),
     fDphiHK0Mixed(0x0),
     fDphiHHMixed(0x0),
-    fDphiHK0LSMixed(0x0),
-    fDphiTriggerTriggerMixed(0x0),
-    fK0DaughterDCA(0x0),
     fpidResponse(0x0),
     fMultSelection(0x0),
     fMultLow(0.0),
     fMultHigh(0.0),
     fDaughterBit(0.0),
     fAssociatedBit(0.0),
-    fTriggerBit(0.0),
-    fTofTest(0x0)
+    fTriggerBit(0.0)
 {
 }
 
@@ -98,40 +80,22 @@ AliAnalysisTaskK0HadronRatio::AliAnalysisTaskK0HadronRatio(const char *name) :
     fTriggerEff(0x0),
     fAssociatedEff(0x0),
     fK0Eff(0x0),
-    fTriggersAndK0sPerEvent_All(0x0),
-    fTriggersAndK0sPerEvent_2_4(0x0),
-    fLooseDist(0x0),
-    fTriggerDist(0x0),
     fTriggerDistEff(0x0),
-    fAssociatedHDist(0x0),
-    fK0Dist(0x0),
     fTriggeredK0Dist(0x0),
     fTriggeredK0DistFilterbit(0x0),
-    fDphiHK0(0x0),
     fDphiHK0Filterbit(0x0),
     fDphiHK0Eff(0x0),
     fDphiHK0V0(0x0),
-    fDphiHK0Rotated(0x0),
-    fDphiHK0RotatedPi(0x0),
-    fDphiHK0RotatedPiMinus(0x0),
-    fDphiHK0Flipped(0x0),
-    fDphiHH(0x0),
     fDphiHHEff(0x0),
-    fDphiTriggerTrigger(0x0),
-    fDphiHK0LS(0x0),
     fDphiHK0Mixed(0x0),
     fDphiHHMixed(0x0),
-    fDphiHK0LSMixed(0x0),
-    fDphiTriggerTriggerMixed(0x0),
-    fK0DaughterDCA(0x0),
     fpidResponse(0x0),
     fMultSelection(0x0),
     fMultLow(0.0),
     fMultHigh(0.0),
     fDaughterBit(0.0),
     fAssociatedBit(0.0),
-    fTriggerBit(0.0),
-    fTofTest(0x0)
+    fTriggerBit(0.0)
 {
     DefineInput(0, TChain::Class());
     DefineOutput(1, TList::Class());
@@ -163,42 +127,20 @@ void AliAnalysisTaskK0HadronRatio::UserCreateOutputObjects()
     fCorPoolMgr = new AliEventPoolManager(poolSize, trackDepth, numMultBins, multBins, numzVtxBins, zVtxBins);
     fCorPoolMgr->SetTargetValues(trackDepth, 0.1, 5);
 
-    fTriggersAndK0sPerEvent_All = new TH2D("fTriggersAndK0sPerEvent_All", "Triggers and K0s per event (all p_{T})", 10, 0, 10, 10, 0, 10);
-    fOutputList->Add(fTriggersAndK0sPerEvent_All);
-
-    fTriggersAndK0sPerEvent_2_4 = new TH2D("fTriggersAndK0sPerEvent_2_4", "Triggers and K0s per event (2-4 p_{T})", 10, 0, 10, 10, 0, 10);
-    fOutputList->Add(fTriggersAndK0sPerEvent_2_4);
-
 
     //Distribution axes are: Pt, Phi, Eta, zVtx
     int dist_bins[4] = {200, 16, 20, 10};
     double dist_mins[4] = {0.0, 0, -1, -10};
     double dist_maxes[4] = {20.0, 6.28, 1, 10};
 
-    fLooseDist = new THnSparseF("fLooseDist", "All Hadron Distribution", 4, dist_bins, dist_mins, dist_maxes);
-    fLooseDist->Sumw2();
-    fOutputList->Add(fLooseDist);
-
-    fTriggerDist = new THnSparseF("fTriggerDist", "Trigger Hadron Distribution", 4, dist_bins, dist_mins, dist_maxes);
-    fTriggerDist->Sumw2();
-    fOutputList->Add(fTriggerDist);
-
     fTriggerDistEff = new THnSparseF("fTriggerDistEff", "Efficiency Corrected Trigger Hadron Distribution", 4, dist_bins, dist_mins, dist_maxes);
     fTriggerDistEff->Sumw2();
     fOutputList->Add(fTriggerDistEff);
-
-    fAssociatedHDist = new THnSparseF("fAssociatedHDist", "Associated Hadron Distribution", 4, dist_bins, dist_mins, dist_maxes);
-    fAssociatedHDist->Sumw2();
-    fOutputList->Add(fAssociatedHDist);
 
     //Mother distribution axes are: Pt, Phi, Eta, Mass, Event multiplicity
     int mother_dist_bins[5] = {100, 16, 20, 100, 10};
     double mother_dist_mins[5] = {0, -3.14, -1, 0.4, 0};
     double mother_dist_maxes[5] = {15, 3.14, 1, 0.6, 100};
-
-    fK0Dist = new THnSparseF("fK0Dist", "K0 Distribution", 5, mother_dist_bins, mother_dist_mins, mother_dist_maxes);
-    fK0Dist->Sumw2();
-    fOutputList->Add(fK0Dist);
 
     fTriggeredK0Dist = new THnSparseF("fTriggeredK0Dist", "K0 Distribution (with triggered event)", 5, mother_dist_bins, mother_dist_mins, mother_dist_maxes);
     fTriggeredK0Dist->Sumw2();
@@ -213,10 +155,6 @@ void AliAnalysisTaskK0HadronRatio::UserCreateOutputObjects()
     double hl_cor_mins[6] = {4.0, 1, -1.0*TMath::Pi()/2.0, -2.0, 0.4, -10};
     double hl_cor_maxes[6] = {12.0, 6, 3.0*TMath::Pi()/2.0, 2.0, 0.6, 10};
 
-    fDphiHK0 = new THnSparseF("fDphiHK0", "Hadron-K0 Correlation Histogram", 6, hl_cor_bins, hl_cor_mins, hl_cor_maxes);
-    fDphiHK0->Sumw2();
-    fOutputList->Add(fDphiHK0);
-
     fDphiHK0Filterbit = new THnSparseF("fDphiHK0Filterbit", "Hadron-K0 Correlation Histogram (daughter has filter bit kTrkGlobalNoDCA) ", 6, hl_cor_bins, hl_cor_mins, hl_cor_maxes);
     fDphiHK0Filterbit->Sumw2();
     fOutputList->Add(fDphiHK0Filterbit);
@@ -229,74 +167,26 @@ void AliAnalysisTaskK0HadronRatio::UserCreateOutputObjects()
     fDphiHK0V0->Sumw2();
     fOutputList->Add(fDphiHK0V0);
 
-    fDphiHK0Rotated = new THnSparseF("fDphiHK0Rotated", "Hadron-K0 (rotated) Correlation Histogram", 6, hl_cor_bins, hl_cor_mins, hl_cor_maxes);
-    fDphiHK0Rotated->Sumw2();
-    fOutputList->Add(fDphiHK0Rotated);
-
-    fDphiHK0RotatedPi = new THnSparseF("fDphiHK0RotatedPi", "Hadron-K0 (rotated pi) Correlation Histogram", 6, hl_cor_bins, hl_cor_mins, hl_cor_maxes);
-    fDphiHK0RotatedPi->Sumw2();
-    fOutputList->Add(fDphiHK0RotatedPi);
-
-    fDphiHK0RotatedPiMinus = new THnSparseF("fDphiHK0RotatedPiMinus", "Hadron-K0 (Pi- rotated) Correlation Histogram", 6, hl_cor_bins, hl_cor_mins, hl_cor_maxes);
-    fDphiHK0RotatedPiMinus->Sumw2();
-    fOutputList->Add(fDphiHK0RotatedPiMinus);
-
-    fDphiHK0Flipped = new THnSparseF("fDphiHK0Flipped", "Hadron-K0 (flipped) Correlation Histogram", 6, hl_cor_bins, hl_cor_mins, hl_cor_maxes);
-    fDphiHK0Flipped->Sumw2();
-    fOutputList->Add(fDphiHK0Flipped);
-
-    fDphiHK0LS = new THnSparseF("fDphiHK0LS", "Hadron-K0 LS Correlation Histogram", 6, hl_cor_bins, hl_cor_mins, hl_cor_maxes);
-    fDphiHK0LS->Sumw2();
-    fOutputList->Add(fDphiHK0LS);
-
     fDphiHK0Mixed = new THnSparseF("fDphiHK0Mixed", "Mixed Hadron-K0 Correlation Histogram", 6, hl_cor_bins, hl_cor_mins, hl_cor_maxes);
     fDphiHK0Mixed->Sumw2();
     fOutputList->Add(fDphiHK0Mixed);
 
-    fDphiHK0LSMixed = new THnSparseF("fDphiHK0LSMixed", "Mixed Hadron-K0 LS Correlation Histogram", 6, hl_cor_bins, hl_cor_mins, hl_cor_maxes);
-    fDphiHK0LSMixed->Sumw2();
-    fOutputList->Add(fDphiHK0LSMixed);
-
+    fDphiHK0V0Mixed = new THnSparseF("fDphiHK0V0Mixed", "Mixed Hadron-K0 (using V0) Correlation Histogram", 6, hl_cor_bins, hl_cor_mins, hl_cor_maxes);
+    fDphiHK0V0Mixed->Sumw2();
+    fOutputList->Add(fDphiHK0V0Mixed);
 
     //Correlation axes are: Trigger Pt, Associated Pt, dPhi, dEta, Zvtx
     int hh_cor_bins[5] = {20, 20, 16, 20, 10};
     double hh_cor_mins[5] = {2, 2, -1.0*TMath::Pi()/2.0, -2.0, -10};
     double hh_cor_maxes[5] = {12, 12, 3.0*TMath::Pi()/2.0, 2.0, 10};
 
-    fDphiHH = new THnSparseF("fDphiHH", "Hadron-Hadron Correlation Histogram", 5, hh_cor_bins, hh_cor_mins, hh_cor_maxes);
-    fDphiHH->Sumw2();
-    fOutputList->Add(fDphiHH);
-
     fDphiHHEff = new THnSparseF("fDphiHHEff", "Efficiency corrected Hadron-Hadron Correlation Histogram", 5, hh_cor_bins, hh_cor_mins, hh_cor_maxes);
     fDphiHHEff->Sumw2();
     fOutputList->Add(fDphiHHEff);
 
-    fDphiTriggerTrigger = new THnSparseF("fDphiTriggerTrigger", "Trigger-Trigger Correlation Histogram", 5, hh_cor_bins, hh_cor_mins, hh_cor_maxes);
-    fDphiTriggerTrigger->Sumw2();
-    fOutputList->Add(fDphiTriggerTrigger);
-
     fDphiHHMixed = new THnSparseF("fDphiHHMixed", "Mixed Hadron-Hadron Correlation Histogram", 5, hh_cor_bins, hh_cor_mins, hh_cor_maxes);
     fDphiHHMixed->Sumw2();
     fOutputList->Add(fDphiHHMixed);
-
-    fDphiTriggerTriggerMixed = new THnSparseF("fDphiTriggerTriggerMixed", "MixedTrigger-Trigger Correlation Histogram", 5, hh_cor_bins, hh_cor_mins, hh_cor_maxes);
-    fDphiTriggerTriggerMixed->Sumw2();
-    fOutputList->Add(fDphiTriggerTriggerMixed);
-
-
-    //axes are pion 0: dca pi+ 1: dca pi-
-    //              2: pt pi+ 3: pt pi-
-    //              4: pt K0     5: mass K0 
-    int dca_bins[6] = {100, 100, 20, 20, 20, 50};
-    double dca_mins[6] = {-2.4, -2.4, 0, 0, 0, 0.4};
-    double dca_maxes[6] = {2.4, 2.4, 10, 10, 10, 0.6};
-
-    fK0DaughterDCA = new THnSparseF("fK0DaughterDCA", "#K0^{0} daughter DCA dist", 6, dca_bins, dca_mins, dca_maxes);
-    fK0DaughterDCA->Sumw2();
-    fOutputList->Add(fK0DaughterDCA);
-
-    fTofTest = new TH2D("fTofTest", "Beta vs P test hist", 1000, 0, 10, 230, 0, 2.3);
-    fOutputList->Add(fTofTest);
 
     PostData(1, fOutputList);
 }
@@ -742,7 +632,6 @@ void AliAnalysisTaskK0HadronRatio::UserExec(Option_t*)
     std::vector<AliAODTrack*> filterbit_piMinus_list;
     std::vector<AliAODTrack*> trigger_list;
     std::vector<AliAODTrack*> associated_h_list;
-    std::vector<AliAODTrack*> all_hadron_list;
 
     //Trigger list used for event mixing
     TObjArray* fMixedTrackObjArray = new TObjArray;
@@ -757,9 +646,6 @@ void AliAnalysisTaskK0HadronRatio::UserExec(Option_t*)
 
         AliAODTrack* track = static_cast<AliAODTrack*>(fAOD->GetTrack(trackNum));
         if(!track) continue;
-
-        //List for comparison with cuts/filter bits
-        all_hadron_list.push_back(track);
 
         //Filter for trigger particles
         if(PassTriggerCuts(track)) {
@@ -805,7 +691,6 @@ void AliAnalysisTaskK0HadronRatio::UserExec(Option_t*)
             double c = 0.0288782;
             double beta = v/c;
 
-            fTofTest->Fill(track->P(), beta);
 
             if(TMath::Abs(TPCNSigmaPion) <= 3 && (TMath::Abs(TOFNSigmaPion) <= 3 || TOFNSigmaPion == 1000)) {
 
@@ -835,38 +720,7 @@ void AliAnalysisTaskK0HadronRatio::UserExec(Option_t*)
     for(int i = 0; i < (int)piPlus_list.size(); i++) {
         for(int j = 0; j < (int) piMinus_list.size(); j++) {
             AliMotherContainer K0 = DaughtersToMother(piPlus_list[i], piMinus_list[j], 0.1396, 0.1396);
-            auto piPlus = piPlus_list[i];
-            auto piMinus = piMinus_list[j];
-            
-            double piPlus_dz[2];
-            double piPlus_covar[3];
-
-            double piMinus_dz[2];
-            double piMinus_covar[3];
-
-            bool is_piPlusDCA = piPlus->PropagateToDCA(prim, fAOD->GetMagneticField(), 20., piPlus_dz, piPlus_covar);
-            bool is_piMinusDCA = piMinus->PropagateToDCA(prim, fAOD->GetMagneticField(), 20., piMinus_dz, piMinus_covar);
-
-            if(is_piPlusDCA && is_piMinusDCA) {
-                double fillArray[6] = {piPlus_dz[0], piMinus_dz[0], piPlus->Pt(), piMinus->Pt(), K0.particle.Pt(), K0.particle.M()};
-                fK0DaughterDCA->Fill(fillArray);
-            }
-
-            AliMotherContainer K0_RotatedPi = RotatedDaughtersToMother(piPlus_list[i], piMinus_list[j], 0.1396, 0.1396, TMath::Pi());
-            AliMotherContainer K0_Flipped = FlippedDaughtersToMother(piPlus_list[i], piMinus_list[j], 0.1396, 0.1396);
             K0_list.push_back(K0);
-            K0_list_RotatedPi.push_back(K0_RotatedPi);
-            K0_list_Flipped.push_back(K0_Flipped);
-
-            AliMotherContainer K0_Rotated;
-            AliMotherContainer K0_RotatedPiMinus;
-            for(int k = 1; k < 12; k++) {
-                K0_Rotated = RotatedDaughtersToMother(piPlus_list[i], piMinus_list[j], 0.1396, 0.1396, (2*TMath::Pi()*k)/12);
-                K0_RotatedPiMinus = RotatedDaughtersToMother(piMinus_list[j], piPlus_list[i], 0.1396, 0.1396, (2*TMath::Pi()*k)/12);
-                K0_list_RotatedPion.push_back(K0_Rotated);
-                K0_list_RotatedPiMinus.push_back(K0_RotatedPiMinus);
-
-            }
         }
     }
 
@@ -874,16 +728,6 @@ void AliAnalysisTaskK0HadronRatio::UserExec(Option_t*)
         for(int j = 0; j < (int) filterbit_piMinus_list.size(); j++) {
             AliMotherContainer filterbit_K0 = DaughtersToMother(filterbit_piPlus_list[i], filterbit_piMinus_list[j], 0.1396, 0.1396);
             K0_list_filterbit_daughters.push_back(filterbit_K0);
-        }
-    }
-
-
-    for(int i = 0; i < (int)K0_list.size(); i++) {
-        if(K0_list[i].particle.M() < 1.125 && K0_list[i].particle.M() > 1.105) {
-            K0_list_signal_region.push_back(K0_list[i]);
-            if(K0_list[i].particle.Pt() < 4 && K0_list[i].particle.Pt() > 2) {
-                K0_list_signal_region_2_4.push_back(K0_list[i]);
-            }
         }
     }
 
@@ -924,33 +768,17 @@ void AliAnalysisTaskK0HadronRatio::UserExec(Option_t*)
 
 
     // Filling all of our single particle distribution histograms:
-    FillSingleParticleDist(trigger_list, primZ, fTriggerDist);
     FillSingleParticleDist(trigger_list, primZ, fTriggerDistEff, true);
-    FillSingleParticleDist(associated_h_list, primZ, fAssociatedHDist);
-    FillSingleParticleDist(all_hadron_list, primZ, fLooseDist);
 
     // Filling our single particle K0 distribution histogram:
     if(is_triggered_event) FillMotherDist(K0_list, multPercentile, fTriggeredK0Dist);
     if(is_triggered_event) FillMotherDist(K0_list_filterbit_daughters, multPercentile, fTriggeredK0DistFilterbit);
-    FillMotherDist(K0_list, multPercentile, fK0Dist);
 
     // Filling all of our correlation histograms
-    MakeSameHK0Correlations(trigger_list, K0_list, fDphiHK0, primZ, false);
     MakeSameHK0Correlations(trigger_list, K0_list_filterbit_daughters, fDphiHK0Filterbit, primZ, false);
     MakeSameHK0Correlations(trigger_list, K0_list, fDphiHK0Eff, primZ, true);
     MakeSameHK0Correlations(trigger_list, K0_list_v0, fDphiHK0V0, primZ);
-    MakeSameHK0Correlations(trigger_list, K0_list_RotatedPi, fDphiHK0RotatedPi, primZ);
-    MakeSameHK0Correlations(trigger_list, K0_list_Flipped, fDphiHK0Flipped, primZ);
-    MakeSameHK0Correlations(trigger_list, K0_list_RotatedPion, fDphiHK0Rotated, primZ);
-    MakeSameHK0Correlations(trigger_list, K0_list_RotatedPiMinus, fDphiHK0RotatedPiMinus, primZ);
-    MakeSameHHCorrelations(trigger_list, associated_h_list, fDphiHH, primZ, false);
     MakeSameHHCorrelations(trigger_list, associated_h_list, fDphiHHEff, primZ, true);
-    MakeSameTriggerTriggerCorrelations(trigger_list, fDphiTriggerTrigger, primZ);
-    MakeSameHK0Correlations(trigger_list, K0_list_LS, fDphiHK0LS, primZ);
-
-
-    fTriggersAndK0sPerEvent_All->Fill(trigger_list.size(), K0_list_signal_region.size());
-    fTriggersAndK0sPerEvent_2_4->Fill(trigger_list.size(), K0_list_signal_region_2_4.size());
 
     if(K0_list.size() > 0 && associated_h_list.size() > 0) {
         AliEventPool *fCorPool = fCorPoolMgr->GetEventPool(multPercentile, primZ);
@@ -962,9 +790,8 @@ void AliAnalysisTaskK0HadronRatio::UserExec(Option_t*)
         else {
             if(fCorPool->IsReady()) {
                 MakeMixedHK0Correlations(fCorPool, K0_list, fDphiHK0Mixed, primZ);
-                MakeMixedHK0Correlations(fCorPool, K0_list_LS, fDphiHK0LSMixed, primZ);
+                MakeMixedHK0Correlations(fCorPool, K0_list_v0, fDphiHK0V0Mixed, primZ);
                 MakeMixedHHCorrelations(fCorPool, associated_h_list, fDphiHHMixed, primZ);
-                MakeMixedHHCorrelations(fCorPool, trigger_list, fDphiTriggerTriggerMixed, primZ);
             }
             if(fMixedTrackObjArray->GetEntries() > 0) {
                 fCorPool->UpdatePool(fMixedTrackObjArray);

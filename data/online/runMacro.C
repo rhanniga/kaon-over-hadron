@@ -24,7 +24,7 @@ void runMacro(bool local=true, bool full=true, bool gridMerge=true){
 
   TString work_dir = "K0_hadron_ratio";
   // TString output_dir = "eff_corr_cent_" + std::to_string(int(MULT_LOW)) + "_" + std::to_string(int(MULT_HIGH)) + "_20210906";
-  TString output_dir = "cent_0_20_20210917";
+  TString output_dir = "cent_0_20_20210920";
   
   //If we want to download test files from grid then run in one swoop (usually just run completely locally):
   bool gridTest = false;

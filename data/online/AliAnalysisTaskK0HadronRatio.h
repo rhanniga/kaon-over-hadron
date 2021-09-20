@@ -70,38 +70,18 @@ private:
   TH1D* fAssociatedEff; ///> associated efficiency
   TH1D* fK0Eff; ///> K0 efficiency
 
-  TH2D* fTriggersAndK0sPerEvent_All; //!>! triggers and all K0s per event
-  TH2D* fTriggersAndK0sPerEvent_2_4; //!>! triggers and 2-4 GeV K0s per event
-
-  TH2D* fTofTest; //!>! tof test
-
-  THnSparse* fLooseDist;  //!>! single particle all hadron dist (no cuts at all)
-  THnSparse* fTriggerDist;  //!>! single particle trigger dist
   THnSparse* fTriggerDistEff;  //!>! single particle trigger dist (corrected for efficiency)
-  THnSparse* fAssociatedHDist;  //!>! single particle associated hadron dist
 
-  THnSparse* fK0Dist;  //!>! single particle K0 dist
   THnSparse* fTriggeredK0Dist;  //!>! single particle K0 dist within a triggered event
   THnSparse* fTriggeredK0DistFilterbit;  //!>! single particle K0 dist where daughters have filter bit 16 within a triggered event
 
-  THnSparse* fDphiHK0;  //!>! hadron-K0 correlation hist
   THnSparse* fDphiHK0Filterbit;  //!>! hadron-K0 correlation hist where daughter has filter bit 16
   THnSparse* fDphiHK0Eff;  //!>! hadron-K0 correlation hist (efficiency corrected)
   THnSparse* fDphiHK0V0;  //!>! hadron-K0 correlation hist (using v0 finder for K0)
-  THnSparse* fDphiHK0Rotated;  //!>! hadron-K0 correlation hist with rotated pion
-  THnSparse* fDphiHK0RotatedPi;  //!>! hadron-K0 correlation hist with daughter rotated by pi
-  THnSparse* fDphiHK0RotatedPiMinus;  //!>! hadron-K0 correlation hist with rotated piminus
-  THnSparse* fDphiHK0Flipped;  //!>! hadron-K0 correlation hist with flipped pion
-  THnSparse* fDphiHH;   //!>! hadron-hadron correlation hist
   THnSparse* fDphiHHEff;   //!>! hadron-hadron correlation hist (efficiency corrected)
-  THnSparse* fDphiTriggerTrigger;   //!>! trigger-trigger correlation hist
-  THnSparse* fDphiHK0LS; //!>! hadron-proton+pion like sign correlation hist
   THnSparse* fDphiHK0Mixed; //!>! hadron-K0 mixed correlation hist
   THnSparse* fDphiHHMixed; //!>! hadron-hadron mixed correlation hist
-  THnSparse* fDphiHK0LSMixed; //!>! hadron-proton+pion like sign mixed correlation hist
-  THnSparse* fDphiTriggerTriggerMixed;   //!>! mixed trigger-trigger correlation hist
-
-  THnSparse* fK0DaughterDCA; //!>!
+  THnSparse* fDphiHK0V0Mixed;  //!>! hadron-K0 mixed correlation hist (using v0 finder for K0)
 
   AliPIDResponse *fpidResponse; //!>!pid response
   AliMultSelection *fMultSelection; //!>!mult selection
