@@ -115,7 +115,7 @@ void AliAnalysisTaskK0HadronRatio::UserCreateOutputObjects()
     fOutputList->SetOwner(true);
 
     //Generating the mixed event pools:
-    int poolSize = 500;
+    int poolSize = 50;
     int trackDepth = 1000;
 
     int numMultBins = 1;
@@ -129,7 +129,7 @@ void AliAnalysisTaskK0HadronRatio::UserCreateOutputObjects()
 
 
     //Distribution axes are: Pt, Phi, Eta, zVtx
-    int dist_bins[4] = {200, 16, 20, 10};
+    int dist_bins[4] = {100, 16, 20, 10};
     double dist_mins[4] = {0.0, 0, -1, -10};
     double dist_maxes[4] = {20.0, 6.28, 1, 10};
 
@@ -138,7 +138,7 @@ void AliAnalysisTaskK0HadronRatio::UserCreateOutputObjects()
     fOutputList->Add(fTriggerDistEff);
 
     //Mother distribution axes are: Pt, Phi, Eta, Mass, Event multiplicity
-    int mother_dist_bins[5] = {100, 16, 20, 100, 10};
+    int mother_dist_bins[5] = {150, 16, 20, 50, 10};
     double mother_dist_mins[5] = {0, -3.14, -1, 0.4, 0};
     double mother_dist_maxes[5] = {15, 3.14, 1, 0.6, 100};
 
@@ -151,7 +151,7 @@ void AliAnalysisTaskK0HadronRatio::UserCreateOutputObjects()
     fOutputList->Add(fTriggeredK0DistFilterbit);
 
     //Correlation axes are: Trigger Pt, Associated Pt, dPhi, dEta, Inv Mass, Zvtx
-    int hl_cor_bins[6] = {8, 10, 16, 20, 100, 10};
+    int hl_cor_bins[6] = {8, 5, 16, 20, 50, 10};
     double hl_cor_mins[6] = {4.0, 1, -1.0*TMath::Pi()/2.0, -2.0, 0.4, -10};
     double hl_cor_maxes[6] = {12.0, 6, 3.0*TMath::Pi()/2.0, 2.0, 0.6, 10};
 
@@ -733,10 +733,11 @@ void AliAnalysisTaskK0HadronRatio::UserExec(Option_t*)
 
 
     // V0 SECTION
-
     int numV0s = fAOD->GetNumberOfV0s();
     for(int i = 0; i < numV0s; i++) {
         AliAODv0 *v0 = fAOD->GetV0(i);
+
+        if(v0->GetOnFlyStatus()) continue;
 
         AliAODTrack* posTrack = (AliAODTrack*) v0->GetDaughter(0);
         AliAODTrack* negTrack = (AliAODTrack*) v0->GetDaughter(1);
@@ -765,7 +766,6 @@ void AliAnalysisTaskK0HadronRatio::UserExec(Option_t*)
             K0_list_v0.push_back(K0);
         }
     }
-
 
     // Filling all of our single particle distribution histograms:
     FillSingleParticleDist(trigger_list, primZ, fTriggerDistEff, true);
